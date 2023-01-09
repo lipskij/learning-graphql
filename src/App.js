@@ -2,6 +2,7 @@ import { useState } from "react";
 import Characters from "./components/characters";
 import LazyLoaded from "./components/lazyLoaded";
 import Photos from "./components/photos";
+import PreviousData from "./components/previousData";
 
 export default function App() {
   return (
@@ -22,9 +23,10 @@ function DisplayMortys() {
 
   return (
     <div>
+      <LazyLoaded />
       <Characters onCharacterSelect={onCharacterSelect} />
       <Photos id={selectedCharID} />
-      <LazyLoaded />
+      <PreviousData id={selectedCharID} />
     </div>
   );
 }
