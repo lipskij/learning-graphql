@@ -1,20 +1,24 @@
 import { gql } from "@apollo/client";
 
-export const NAMES_FIELD = gql`
+const NAMES_FIELD = gql`
   fragment Names on Character {
     name
+    id
   }
 `;
 
 const GET_MORTYS = gql`
-  query Query {
-    characters {
+  query Mortys {
+    characters(page: 2, filter: { name: "Morty" }) {
       info {
         count
       }
       results {
         ...Names
       }
+    }
+    location(id: 1) {
+      id
     }
   }
   ${NAMES_FIELD}
