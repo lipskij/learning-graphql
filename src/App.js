@@ -1,6 +1,6 @@
-// Import everything needed to use the `useQuery` hook
-import { useQuery } from "@apollo/client";
-import GET_MORTYS from "./queries/getLocations";
+import { useState } from "react";
+import Characters from "./components/characters";
+import Photos from "./components/photos";
 
 export default function App() {
   return (
@@ -13,19 +13,16 @@ export default function App() {
 }
 
 function DisplayMortys() {
-  const { loading, error, data } = useQuery(GET_MORTYS);
+  const [selectedCharID, setSelectedCharID] = useState("");
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error : {error.message}</p>;
+  const onCharacterSelect = (e) => {
+    setSelectedCharID(e.target.value);
+  };
 
   return (
     <div>
-      <h3>Characters</h3>
-      {data.characters.results.map((i, index) => (
-        <div key={i.name + index}>
-          <p>{i.name}</p>
-        </div>
-      ))}
+      <Characters onCharacterSelect={onCharacterSelect} />
+      <Photos id={selectedCharID} />
     </div>
   );
 }
