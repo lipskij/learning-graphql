@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 
 import GET_MORTYS from "../queries/getNames";
 
-const Characters = ({ onCharacterSelect }) => {
+const CharactersSelect = ({ onCharacterSelect }) => {
   const { loading, error, data } = useQuery(GET_MORTYS);
 
   if (loading) return <p>Loading...</p>;
@@ -11,10 +11,7 @@ const Characters = ({ onCharacterSelect }) => {
   return (
     <>
       <h3>Characters</h3>
-      <select
-        name='character'
-        onChange={(e) => onCharacterSelect(e)}
-      >
+      <select name='character' onChange={(e) => onCharacterSelect(e)}>
         {data.characters.results.map((i) => (
           <option key={i.id} value={i.id}>
             {i.name}
@@ -25,4 +22,4 @@ const Characters = ({ onCharacterSelect }) => {
   );
 };
 
-export default Characters;
+export default CharactersSelect;

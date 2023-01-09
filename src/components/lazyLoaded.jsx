@@ -9,14 +9,13 @@ const LazyLoaded = () => {
 
   return (
     <div>
-      <button onClick={() => getPhoto({ variables: { characterId: 24 } })}>
-        Show me what you got
-      </button>
-      <br />
-      <br />
       {data?.character?.image ? (
         <img src={data?.character?.image} alt='lazyloaded' />
-      ) : null}
+      ) : (
+        <button onClick={() => getPhoto({ variables: { characterId: 24 } })}>
+          Show me what you got
+        </button>
+      )}
     </div>
   );
 };
