@@ -2,10 +2,12 @@ import GET_PHOTO from "../queries/getPhotos";
 import { useQuery, NetworkStatus } from "@apollo/client";
 
 const Photos = ({ id }) => {
-  const { loading, error, data, refetch, networkStatus } = useQuery(GET_PHOTO, {
-    variables: { characterId: id },
-    notifyOnNetworkStatusChange: true,
-  });
+  const { loading, error, data, refetch, networkStatus, previousData } =
+    useQuery(GET_PHOTO, {
+      variables: { characterId: id },
+      notifyOnNetworkStatusChange: true,
+      nextFetchPolicy: "cache-first",
+    });
 
   if (networkStatus === NetworkStatus.refetch) return "Refetching!";
   if (loading) return <p>Loading...</p>;
@@ -20,7 +22,17 @@ const Photos = ({ id }) => {
       <br />
       <br />
       {data.character.image ? (
-        <img src={data.character.image} alt='character' />
+        <>
+          <p>Current: {data.character.name}</p>
+          <img src={data.character.image} alt='character' />
+        </>
+      ) : null}
+
+      {previousData?.character?.name ? (
+        <>
+          <p>Previous: {previousData?.character?.name}</p>
+          <img src={previousData?.character?.image} alt='previusImage' />
+        </>
       ) : null}
     </div>
   );
