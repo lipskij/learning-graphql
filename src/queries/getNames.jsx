@@ -10,15 +10,9 @@ const NAMES_FIELD = gql`
 const GET_MORTYS = gql`
   query Mortys {
     characters(page: 2, filter: { name: "Morty" }) {
-      info {
-        count
-      }
       results {
         ...Names
       }
-    }
-    location(id: 1) {
-      id
     }
   }
   ${NAMES_FIELD}
