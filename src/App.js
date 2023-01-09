@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Characters from "./components/characters";
+import LazyLoaded from "./components/lazyLoaded";
 import Photos from "./components/photos";
 
 export default function App() {
@@ -23,6 +24,7 @@ function DisplayMortys() {
     <div>
       <Characters onCharacterSelect={onCharacterSelect} />
       <Photos id={selectedCharID} />
+      <LazyLoaded />
     </div>
   );
 }
