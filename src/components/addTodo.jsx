@@ -1,17 +1,36 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, gql } from "@apollo/client";
 import { ADD_TODO, GET_BOOKS } from "../queries/addTodo";
 
 // page that refeches query DONE
 
-// page that modifies cache
+// page that modifies cache DONE
+
 // optimistic UI
 
 const AddTodo = () => {
   let input;
-  const [addBook, { loading, error }] = useMutation(ADD_TODO, {
-    refetchQueries: [GET_BOOKS],
-  });
 
+  const [addBook, { loading, error }] = useMutation(ADD_TODO, {
+    update(cache, { data: { addBook } }) {
+      cache.modify({
+        fields: {
+          books(existingBooks = []) {
+            const newBooksRef = cache.writeFragment({
+              data: addBook,
+              fragment: gql`
+                fragment NewBook on Book {
+                  title
+                  author
+                }
+              `,
+            });
+            console.log(newBooksRef)
+            return [...existingBooks, newBooksRef];
+          },
+        },
+      });
+    },
+  });
   const {
     loadingTodos,
     erroTodos,
@@ -41,12 +60,12 @@ const AddTodo = () => {
               input = node;
             }}
           />
-          <button type='submit'>Add Todo</button>
+          <button type='submit'>Add book</button>
         </form>
       )}
 
-      <h4>TODOS</h4>
-      {loadingTodos ? <p>Loading todos...</p> : null}
+      <h4>BOOKS</h4>
+      {loadingTodos ? <p>Loading books...</p> : null}
       <ul>
         {dataTodos?.books
           ? dataTodos?.books.map((i, index) => (
