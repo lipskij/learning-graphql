@@ -29,7 +29,10 @@ const books = [
 
 export const resolvers = {
   Query: {
-    books: () => books,
+    books: () => {
+      console.log(books);
+      return books;
+    },
   },
   Mutation: {
     addBook: (_, args) => {

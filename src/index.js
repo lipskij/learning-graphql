@@ -4,9 +4,15 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import App from "./App.js";
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000',
+  uri: "http://localhost:4000/",
   // uri: "https://api-eu-central-1-shared-euc1-02.hygraph.com/v2/clcpz04k60xv501t923xndw9n/master",
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Book: {
+        keyFields: ["title", "author"],
+      },
+    },
+  }),
 });
 
 // Supported in React 18+

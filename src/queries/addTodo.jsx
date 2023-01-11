@@ -1,16 +1,19 @@
 import { gql } from "@apollo/client";
 
-export const TODO_LIST = gql`
+export const GET_BOOKS = gql`
   query Book {
-    title
-    author
+    books {
+      title
+      author
+    }
   }
 `;
 
 export const ADD_TODO = gql`
-  mutation AddTodo($type: String!) {
-    addTodo(type: $type) {
-      type
+  mutation AddTodo($title: String!, $author: String!) {
+    addBook(title: $title, author: $author) {
+      title
+      author
     }
   }
 `;
