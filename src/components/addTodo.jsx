@@ -5,7 +5,7 @@ import { ADD_TODO, GET_BOOKS } from "../queries/addTodo";
 
 // page that modifies cache DONE
 
-// optimistic UI
+// optimistic UI DONE
 
 const AddTodo = () => {
   let input;
@@ -24,7 +24,6 @@ const AddTodo = () => {
                 }
               `,
             });
-            console.log(newBooksRef)
             return [...existingBooks, newBooksRef];
           },
         },
@@ -39,7 +38,6 @@ const AddTodo = () => {
     fetchPolicy: "cache-only",
   });
 
-  console.log(dataTodos);
   if (error) return `Submission error! ${error.message}`;
   if (erroTodos) return `Todos error: ${erroTodos.message}`;
 
@@ -51,7 +49,16 @@ const AddTodo = () => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            addBook({ variables: { title: input.value, author: "Testing" } });
+            addBook({
+              variables: { title: input.value, author: "Testing" },
+              optimisticResponse: {
+                addBook: {
+                  id: "temp-id",
+                  __typename: "Book",
+                  title: input.value,
+                },
+              },
+            });
             input.value = "";
           }}
         >

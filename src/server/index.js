@@ -30,7 +30,6 @@ const books = [
 export const resolvers = {
   Query: {
     books: () => {
-      console.log(books);
       return books;
     },
   },
