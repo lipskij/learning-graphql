@@ -35,7 +35,7 @@ const AddTodo = () => {
     erroTodos,
     data: dataTodos,
   } = useQuery(GET_BOOKS, {
-    fetchPolicy: "cache-only",
+    fetchPolicy: "cache-and-network",
   });
 
   if (error) return `Submission error! ${error.message}`;
