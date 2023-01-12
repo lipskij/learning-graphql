@@ -3,6 +3,7 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 
 const typeDefs = `
   type Book {
+    id: Int
     title: String
     author: String
   }
@@ -12,16 +13,18 @@ const typeDefs = `
   }
 
   type Mutation {
-    addBook(title: String, author: String): Book
+    addBook(id: Int, title: String, author: String): Book
   }
 `;
 
 const books = [
   {
+    id: 1,
     title: "The Awakening",
     author: "Kate Chopin",
   },
   {
+    id: 2,
     title: "City of Glass",
     author: "Paul Auster",
   },
@@ -36,6 +39,7 @@ export const resolvers = {
   Mutation: {
     addBook: (_, args) => {
       const book = {
+        id: books.length + 1,
         title: args.title,
         author: args.author,
       };

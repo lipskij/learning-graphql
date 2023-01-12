@@ -1,5 +1,5 @@
 import { useMutation, useQuery, gql } from "@apollo/client";
-import { ADD_TODO, GET_BOOKS } from "../queries/addTodo";
+import { ADD_BOOK, GET_BOOKS } from "../queries/addBook";
 
 // page that refeches query DONE
 
@@ -10,36 +10,9 @@ import { ADD_TODO, GET_BOOKS } from "../queries/addTodo";
 const AddTodo = () => {
   let input;
 
-  const [addBook, { loading, error }] = useMutation(ADD_TODO, {
-    update(cache, { data: { addBook } }) {
-      cache.modify({
-        fields: {
-          books(existingBooks = []) {
-            const newBooksRef = cache.writeFragment({
-              data: addBook,
-              fragment: gql`
-                fragment NewBook on Book {
-                  title
-                  author
-                }
-              `,
-            });
-            return [...existingBooks, newBooksRef];
-          },
-        },
-      });
-    },
-  });
-  const {
-    loadingTodos,
-    erroTodos,
-    data: dataTodos,
-  } = useQuery(GET_BOOKS, {
-    fetchPolicy: "cache-and-network",
-  });
+  const [addBook, { loading, error }] = useMutation(ADD_BOOK);
 
   if (error) return `Submission error! ${error.message}`;
-  if (erroTodos) return `Todos error: ${erroTodos.message}`;
 
   return (
     <div>
@@ -51,13 +24,6 @@ const AddTodo = () => {
             e.preventDefault();
             addBook({
               variables: { title: input.value, author: "Testing" },
-              optimisticResponse: {
-                addBook: {
-                  id: "temp-id",
-                  __typename: "Book",
-                  title: input.value,
-                },
-              },
             });
             input.value = "";
           }}
@@ -71,17 +37,45 @@ const AddTodo = () => {
         </form>
       )}
 
+      <BookList />
+    </div>
+  );
+};
+
+export default AddTodo;
+
+const BookList = () => {
+  const { loading, error, data } = useQuery(GET_BOOKS, {
+    fetchPolicy: "cache-and-network",
+  });
+
+  if (error) return `Todos error: ${error.message}`;
+
+  return (
+    <div>
       <h4>BOOKS</h4>
-      {loadingTodos ? <p>Loading books...</p> : null}
-      <ul>
-        {dataTodos?.books
-          ? dataTodos?.books.map((i, index) => (
-              <li key={i.title + index}>{i.title}</li>
+      {loading ? <p>Loading books...</p> : null}
+      <ul
+        style={{
+          padding: 0,
+        }}
+      >
+        {data?.books
+          ? data?.books.map((i, index) => (
+              <li
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+                key={i.title + index}
+              >
+                <span> Author: {i.author}</span>
+                Title: {i.title}
+                <hr />
+              </li>
             ))
           : null}
       </ul>
     </div>
   );
 };
-
-export default AddTodo;
