@@ -46,9 +46,7 @@ const AddTodo = () => {
   });
 
   const [completeTodo] = useMutation(COMPLETE_TODO);
-  const [removeTodo] = useMutation(REMOVE_TODO, {
-    refetchQueries: [GET_TODO],
-  });
+  const [removeTodo] = useMutation(REMOVE_TODO);
 
   if (error) return `Submission error! ${error.message}`;
   if (erroTodos) return `Todos error: ${erroTodos.message}`;
@@ -135,6 +133,14 @@ const AddTodo = () => {
                       variables: {
                         id: i.id,
                       },
+                      // garbage collection
+                      update(cache) {
+                        cache.evict({
+                          id: cache.identify({ id: i.id, __typename: "Todo" }),
+                        });
+                        cache.gc();
+                      },
+                      refetchQueries: [GET_TODO],
                     });
                   }}
                 >
