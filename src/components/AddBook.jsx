@@ -114,6 +114,14 @@ const AddTodo = () => {
                       variables: {
                         id: i.id,
                       },
+                      optimisticResponse: {
+                        completeTodo: {
+                          id: i.id,
+                          __typename: "Todo",
+                          title: i.title,
+                          completed: false,
+                        },
+                      },
                     });
                   }}
                   disabled={i.completed}
