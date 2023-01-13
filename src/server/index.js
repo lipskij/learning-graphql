@@ -2,45 +2,56 @@ import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 
 const typeDefs = `
-  type Book {
+  type Todo {
+    id: Int
     title: String
-    author: String
+    completed: Boolean
   }
 
   type Query {
-    books: [Book]
+    todos: [Todo]
   }
 
   type Mutation {
-    addBook(title: String, author: String): Book
+    addTodo(id: Int, title: String, completed: Boolean): Todo
+    completeTodo(id: Int): Todo
   }
 `;
 
-const books = [
+const todos = [
   {
+    id: 1,
     title: "The Awakening",
-    author: "Kate Chopin",
+    completed: true,
   },
   {
+    id: 2,
     title: "City of Glass",
-    author: "Paul Auster",
+    completed: false,
   },
 ];
 
 export const resolvers = {
   Query: {
-    books: () => {
-      return books;
+    todos: () => {
+      return todos;
     },
   },
   Mutation: {
-    addBook: (_, args) => {
-      const book = {
+    addTodo: (_, args) => {
+      const todo = {
+        id: todos.length + 1,
         title: args.title,
-        author: args.author,
+        completed: false,
       };
-      books.push(book);
-      return book;
+      todos.push(todo);
+      return todo;
+    },
+
+    completeTodo: (_, args) => {
+      const todo = todos.find((i) => i.id === args.id);
+      todo.completed = true;
+      return todo;
     },
   },
 };

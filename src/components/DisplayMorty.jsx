@@ -1,7 +1,7 @@
 import { useState } from "react";
-import CharactersSelect from "./charactersSelect";
-import Photos from "./photos";
-import PreviousData from "./previousData";
+import CharactersSelect from "./CharacterSelect";
+import Photos from "./Photos";
+import PreviousData from "./PreviousData";
 
 const DisplayMortys = () => {
   const [selectedCharID, setSelectedCharID] = useState("");
