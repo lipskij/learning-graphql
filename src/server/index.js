@@ -15,6 +15,7 @@ const typeDefs = `
   type Mutation {
     addTodo(id: Int, title: String, completed: Boolean): Todo
     completeTodo(id: Int): Todo
+    removeTodo(id: Int): Todo
   }
 `;
 
@@ -52,6 +53,13 @@ export const resolvers = {
       const todo = todos.find((i) => i.id === args.id);
       todo.completed = true;
       return todo;
+    },
+
+    removeTodo: (_, args) => {
+      const todo = todos.indexOf(args.id);
+      todos.splice(todo, 1);
+
+      return todos;
     },
   },
 };

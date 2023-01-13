@@ -1,5 +1,10 @@
 import { useMutation, useQuery, gql } from "@apollo/client";
-import { ADD_TODO, COMPLETE_TODO, GET_TODO } from "../queries/AddTodo";
+import {
+  ADD_TODO,
+  COMPLETE_TODO,
+  GET_TODO,
+  REMOVE_TODO,
+} from "../queries/AddTodo";
 
 // page that refeches query DONE
 
@@ -41,11 +46,13 @@ const AddTodo = () => {
   });
 
   const [completeTodo] = useMutation(COMPLETE_TODO);
+  const [removeTodo] = useMutation(REMOVE_TODO, {
+    refetchQueries: [GET_TODO],
+  });
 
   if (error) return `Submission error! ${error.message}`;
   if (erroTodos) return `Todos error: ${erroTodos.message}`;
 
-  console.log(completeTodo);
   return (
     <div>
       {loading ? (
@@ -113,7 +120,18 @@ const AddTodo = () => {
                 >
                   Completed
                 </button>
-                <button>Remove</button>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    removeTodo({
+                      variables: {
+                        id: i.id,
+                      },
+                    });
+                  }}
+                >
+                  Remove
+                </button>
               </li>
             ))
           : null}

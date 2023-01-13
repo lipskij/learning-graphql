@@ -29,3 +29,13 @@ export const COMPLETE_TODO = gql`
     }
   }
 `;
+
+export const REMOVE_TODO = gql`
+  mutation RemoveTodo($id: Int) {
+    removeTodo(id: $id) {
+      id
+      title
+      completed
+    }
+  }
+`
