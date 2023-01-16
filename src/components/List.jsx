@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { GET_TODO, COMPLETE_TODO, REMOVE_TODO } from "../queries/AddTodo";
 import { useQuery, useMutation } from "@apollo/client";
 
 const List = () => {
-  const [limit, setLimit] = useState(2);
+  const [limit, setLimit] = useState(4);
+  const listRef = useRef(null);
 
   const { loadingTodos, errorTodos, data, fetchMore } = useQuery(GET_TODO, {
     variables: {
@@ -19,16 +20,34 @@ const List = () => {
   if (loadingTodos) return `Loading...`;
   if (errorTodos) return `Todos error: ${errorTodos.message}`;
 
-  console.log(data)
+  const scroolHandler = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+
+    if (scrollTop + clientHeight >= scrollHeight - 5) {
+      console.log("load more");
+      fetchMore({
+        variables: {
+          limit: setLimit(data?.todos.length + 2),
+        },
+      });
+    }
+  };
+
   return (
     <div>
       <ul
+        ref={listRef}
         style={{
           display: "flex",
           flexDirection: "column",
           gap: "1rem",
           width: "90%",
+          height: "100px",
+          overflow: "scroll",
+          border: "1px solid grey",
+          padding: "1rem",
         }}
+        onScroll={(e) => scroolHandler(e)}
       >
         {data?.todos.map((i) => (
           <li
@@ -91,19 +110,19 @@ const List = () => {
             </button>
           </li>
         ))}
-        <button
-          disabled={limit > data?.todos.length}
-          onClick={() =>
-            fetchMore({
-              variables: {
-                limit: setLimit(data?.todos.length + 2),
-              },
-            })
-          }
-        >
-          Load more
-        </button>
       </ul>
+      <button
+        disabled={limit > data?.todos.length}
+        onClick={() =>
+          fetchMore({
+            variables: {
+              limit: setLimit(data?.todos.length + 2),
+            },
+          })
+        }
+      >
+        Load more
+      </button>
     </div>
   );
 };
