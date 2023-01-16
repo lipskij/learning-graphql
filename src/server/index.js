@@ -9,7 +9,7 @@ const typeDefs = `
   }
 
   type Query {
-    todos: [Todo]
+    todos(offset: Int, limit: Int): [Todo]
   }
 
   type Mutation {
@@ -30,12 +30,22 @@ const todos = [
     title: "City of Glass",
     completed: false,
   },
+  {
+    id: 3,
+    title: "Title pagination",
+    completed: false,
+  },
+  {
+    id: 4,
+    title: "Some title",
+    completed: false,
+  },
 ];
 
 export const resolvers = {
   Query: {
-    todos: () => {
-      return todos;
+    todos: (_, { limit }) => {
+      return todos.slice(0, limit);
     },
   },
   Mutation: {

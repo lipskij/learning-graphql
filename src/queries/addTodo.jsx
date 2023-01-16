@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_TODO = gql`
-  query Todo {
-    todos {
+  query Todo($offset: Int, $limit: Int) {
+    todos(offset: $offset, limit: $limit) {
       id
       title
       completed
@@ -38,4 +38,4 @@ export const REMOVE_TODO = gql`
       completed
     }
   }
-`
+`;

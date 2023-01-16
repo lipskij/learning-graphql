@@ -1,16 +1,6 @@
-import { useMutation, useQuery, gql } from "@apollo/client";
-import {
-  ADD_TODO,
-  COMPLETE_TODO,
-  GET_TODO,
-  REMOVE_TODO,
-} from "../queries/AddTodo";
-
-// page that refeches query DONE
-
-// page that modifies cache DONE
-
-// optimistic UI DONE
+import { useMutation, gql } from "@apollo/client";
+import { ADD_TODO } from "../queries/AddTodo";
+import List from "./List";
 
 const AddTodo = () => {
   let input;
@@ -37,19 +27,7 @@ const AddTodo = () => {
     },
   });
 
-  const {
-    loadingTodos,
-    erroTodos,
-    data: dataTodos,
-  } = useQuery(GET_TODO, {
-    fetchPolicy: "cache-and-network",
-  });
-
-  const [completeTodo] = useMutation(COMPLETE_TODO);
-  const [removeTodo] = useMutation(REMOVE_TODO);
-
   if (error) return `Submission error! ${error.message}`;
-  if (erroTodos) return `Todos error: ${erroTodos.message}`;
 
   return (
     <div>
@@ -83,73 +61,8 @@ const AddTodo = () => {
       )}
 
       <h4>TODOS</h4>
-      {loadingTodos ? <p>Loading list...</p> : null}
-      <ul
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-          width: "90%",
-        }}
-      >
-        {dataTodos?.todos
-          ? dataTodos?.todos.map((i) => (
-              <li
-                key={i.id}
-                style={
-                  i.completed
-                    ? { textDecoration: "line-through" }
-                    : {
-                        textDecoration: "none",
-                      }
-                }
-              >
-                {i.title}
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    completeTodo({
-                      variables: {
-                        id: i.id,
-                      },
-                      optimisticResponse: {
-                        completeTodo: {
-                          id: i.id,
-                          __typename: "Todo",
-                          title: i.title,
-                          completed: false,
-                        },
-                      },
-                    });
-                  }}
-                  disabled={i.completed}
-                >
-                  Completed
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    removeTodo({
-                      variables: {
-                        id: i.id,
-                      },
-                      // garbage collection
-                      update(cache) {
-                        cache.evict({
-                          id: cache.identify({ id: i.id, __typename: "Todo" }),
-                        });
-                        cache.gc();
-                      },
-                      refetchQueries: [GET_TODO],
-                    });
-                  }}
-                >
-                  Remove
-                </button>
-              </li>
-            ))
-          : null}
-      </ul>
+
+      <List />
     </div>
   );
 };
