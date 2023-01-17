@@ -1,14 +1,17 @@
-import { useState, useRef } from "react";
-import { GET_TODO, COMPLETE_TODO, REMOVE_TODO } from "../queries/AddTodo";
+import { useState, useCallback } from "react";
+import {
+  GET_TODO,
+  COMPLETE_TODO,
+  REMOVE_TODO,
+  TOGGLE_TODO,
+} from "../queries/addTodo";
 import { useQuery, useMutation } from "@apollo/client";
 
 const List = () => {
   const [limit, setLimit] = useState(4);
-  const listRef = useRef(null);
 
   const { loadingTodos, errorTodos, data, fetchMore } = useQuery(GET_TODO, {
     variables: {
-      offset: 0,
       limit,
     },
     fetchPolicy: "cache-and-network",
@@ -16,27 +19,36 @@ const List = () => {
 
   const [completeTodo] = useMutation(COMPLETE_TODO);
   const [removeTodo] = useMutation(REMOVE_TODO);
+  const [toggleTodo] = useMutation(TOGGLE_TODO);
+
+  const scroolHandler = useCallback(
+    (e) => {
+      if (!data) return;
+      if (limit > data?.todos.length) return;
+
+      const { scrollTop, scrollHeight, clientHeight } = e.target;
+
+      const pageEnd = Math.ceil(scrollTop + clientHeight) >= scrollHeight - 5;
+
+      if (pageEnd && !loadingTodos) {
+        fetchMore({
+          variables: {
+            limit,
+          },
+        });
+        setLimit((prev) => prev + 4);
+      }
+    },
+    [data, limit, loadingTodos, fetchMore]
+  );
 
   if (loadingTodos) return `Loading...`;
   if (errorTodos) return `Todos error: ${errorTodos.message}`;
 
-  const scroolHandler = (e) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.target;
-
-    if (scrollTop + clientHeight >= scrollHeight - 5) {
-      console.log("load more");
-      fetchMore({
-        variables: {
-          limit: setLimit(data?.todos.length + 2),
-        },
-      });
-    }
-  };
-
+  console.log(data);
   return (
     <div>
       <ul
-        ref={listRef}
         style={{
           display: "flex",
           flexDirection: "column",
@@ -108,18 +120,31 @@ const List = () => {
             >
               Remove
             </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                toggleTodo({
+                  variables: {
+                    id: i.id,
+                  },
+                });
+              }}
+            >
+              {i.liked ? "UNLIKE" : "LIKE"}
+            </button>
           </li>
         ))}
       </ul>
       <button
         disabled={limit > data?.todos.length}
-        onClick={() =>
+        onClick={() => {
           fetchMore({
             variables: {
-              limit: setLimit(data?.todos.length + 2),
+              limit,
             },
-          })
-        }
+          });
+          setLimit((prev) => prev + 4);
+        }}
       >
         Load more
       </button>

@@ -6,6 +6,7 @@ export const GET_TODO = gql`
       id
       title
       completed
+      liked @client
     }
   }
 `;
@@ -37,5 +38,11 @@ export const REMOVE_TODO = gql`
       title
       completed
     }
+  }
+`;
+
+export const TOGGLE_TODO = gql`
+  mutation ToggleTodo($id: Int!) {
+    toggleTodo(id: $id) @client
   }
 `;

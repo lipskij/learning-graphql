@@ -1,5 +1,5 @@
 import { useMutation, gql } from "@apollo/client";
-import { ADD_TODO } from "../queries/AddTodo";
+import { ADD_TODO } from "../queries/addTodo";
 import List from "./List";
 
 const AddTodo = () => {

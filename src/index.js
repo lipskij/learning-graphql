@@ -11,23 +11,58 @@ const client = new ApolloClient({
       Query: {
         fields: {
           feed: {
-            // Don't cache separate results based on
-            // any of this field's arguments.
             keyArgs: false,
-
-            // Concatenate the incoming list items with
-            // the existing list items.
             merge(existing = [], incoming) {
+              console.log(existing, incoming);
               return [...existing, ...incoming];
+            },
+          },
+        },
+      },
+      Todo: {
+        fields: {
+          liked: {
+            read(_, { readField }) {
+              const liked = JSON.parse(localStorage.getItem("liked"));
+
+              if (liked) {
+                return liked.includes(readField("id"));
+              }
+              return false;
             },
           },
         },
       },
     },
   }),
+  resolvers: {
+    Mutation: {
+      toggleTodo: (_root, variables, { cache }) => {
+        const likes = JSON.parse(localStorage.getItem("liked")) ?? [];
+        const value = likes.includes(variables.id);
+
+        if (value) {
+          localStorage.setItem(
+            "liked",
+            JSON.stringify(likes.filter((i) => i !== variables.id))
+          );
+        }
+
+        if (!value) {
+          likes.push(variables.id);
+          localStorage.setItem("liked", JSON.stringify(likes));
+        }
+        cache.evict({
+          id: cache.identify({ id: variables.id, __typename: "Todo" }),
+          fieldName: "liked",
+        });
+        cache.gc();
+        return null;
+      },
+    },
+  },
 });
 
-// Supported in React 18+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(

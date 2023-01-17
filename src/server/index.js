@@ -40,11 +40,37 @@ const todos = [
     title: "Some title",
     completed: false,
   },
+  {
+    id: 5,
+    title: "Some title",
+    completed: false,
+  },
+  {
+    id: 6,
+    title: "Some title",
+    completed: false,
+  },
+  {
+    id: 7,
+    title: "Some title",
+    completed: false,
+  },
+  {
+    id: 8,
+    title: "Some title",
+    completed: false,
+  },
+  {
+    id: 9,
+    title: "Some title",
+    completed: false,
+  },
 ];
 
 export const resolvers = {
   Query: {
     todos: (_, { limit }) => {
+      console.log(limit);
       return todos.slice(0, limit);
     },
   },
