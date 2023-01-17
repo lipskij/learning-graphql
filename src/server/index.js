@@ -69,9 +69,8 @@ const todos = [
 
 export const resolvers = {
   Query: {
-    todos: (_, { limit }) => {
-      console.log(limit);
-      return todos.slice(0, limit);
+    todos: (_, { offset, limit }) => {
+      return todos.slice(offset, limit);
     },
   },
   Mutation: {

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import {
   GET_TODO,
   COMPLETE_TODO,
@@ -8,11 +8,10 @@ import {
 import { useQuery, useMutation } from "@apollo/client";
 
 const List = () => {
-  const [limit, setLimit] = useState(4);
-
   const { loadingTodos, errorTodos, data, fetchMore } = useQuery(GET_TODO, {
     variables: {
-      limit,
+      offset: 0,
+      limit: 4,
     },
     fetchPolicy: "cache-and-network",
   });
@@ -24,7 +23,6 @@ const List = () => {
   const scroolHandler = useCallback(
     (e) => {
       if (!data) return;
-      if (limit > data?.todos.length) return;
 
       const { scrollTop, scrollHeight, clientHeight } = e.target;
 
@@ -33,19 +31,18 @@ const List = () => {
       if (pageEnd && !loadingTodos) {
         fetchMore({
           variables: {
-            limit,
+            offset: data?.todos.length,
+            limit: data?.todos.length + 4,
           },
         });
-        setLimit((prev) => prev + 4);
       }
     },
-    [data, limit, loadingTodos, fetchMore]
+    [data, loadingTodos, fetchMore]
   );
 
   if (loadingTodos) return `Loading...`;
   if (errorTodos) return `Todos error: ${errorTodos.message}`;
 
-  console.log(data);
   return (
     <div>
       <ul
@@ -136,14 +133,14 @@ const List = () => {
         ))}
       </ul>
       <button
-        disabled={limit > data?.todos.length}
+        disabled={!data?.todos.length}
         onClick={() => {
           fetchMore({
             variables: {
-              limit,
+              offset: data?.todos.length,
+              limit: data?.todos.length + 4,
             },
           });
-          setLimit((prev) => prev + 4);
         }}
       >
         Load more

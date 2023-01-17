@@ -10,10 +10,9 @@ const client = new ApolloClient({
     typePolicies: {
       Query: {
         fields: {
-          feed: {
+          todos: {
             keyArgs: false,
             merge(existing = [], incoming) {
-              console.log(existing, incoming);
               return [...existing, ...incoming];
             },
           },
