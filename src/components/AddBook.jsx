@@ -42,7 +42,7 @@ const AddTodo = () => {
               optimisticResponse: {
                 addTodo: {
                   id: "temp-id",
-                  __typename: "Todos",
+                  __typename: "Todo",
                   title: input.value,
                   completed: false,
                 },

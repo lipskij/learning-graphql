@@ -4,6 +4,7 @@ import {
   COMPLETE_TODO,
   REMOVE_TODO,
   TOGGLE_TODO,
+  GET_TODO_COUNT,
 } from "../queries/addTodo";
 import { useQuery, useMutation } from "@apollo/client";
 
@@ -14,6 +15,10 @@ const List = () => {
       limit: 4,
     },
     fetchPolicy: "cache-and-network",
+  });
+
+  const { data: count } = useQuery(GET_TODO_COUNT, {
+    pollInterval: 3000,
   });
 
   const [completeTodo] = useMutation(COMPLETE_TODO);
@@ -45,6 +50,7 @@ const List = () => {
 
   return (
     <div>
+      <p>Todos count: {count?.count ?? 0}</p>
       <ul
         style={{
           display: "flex",

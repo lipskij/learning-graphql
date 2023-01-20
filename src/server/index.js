@@ -10,6 +10,7 @@ const typeDefs = `
 
   type Query {
     todos(offset: Int, limit: Int): [Todo]
+    count: Int
   }
 
   type Mutation {
@@ -30,41 +31,41 @@ const todos = [
     title: "City of Glass",
     completed: false,
   },
-  {
-    id: 3,
-    title: "Title pagination",
-    completed: false,
-  },
-  {
-    id: 4,
-    title: "Some title",
-    completed: false,
-  },
-  {
-    id: 5,
-    title: "Some title",
-    completed: false,
-  },
-  {
-    id: 6,
-    title: "Some title",
-    completed: false,
-  },
-  {
-    id: 7,
-    title: "Some title",
-    completed: false,
-  },
-  {
-    id: 8,
-    title: "Some title",
-    completed: false,
-  },
-  {
-    id: 9,
-    title: "Some title",
-    completed: false,
-  },
+  // {
+  //   id: 3,
+  //   title: "Title pagination",
+  //   completed: false,
+  // },
+  // {
+  //   id: 4,
+  //   title: "Some title",
+  //   completed: false,
+  // },
+  // {
+  //   id: 5,
+  //   title: "Some title",
+  //   completed: false,
+  // },
+  // {
+  //   id: 6,
+  //   title: "Some title",
+  //   completed: false,
+  // },
+  // {
+  //   id: 7,
+  //   title: "Some title",
+  //   completed: false,
+  // },
+  // {
+  //   id: 8,
+  //   title: "Some title",
+  //   completed: false,
+  // },
+  // {
+  //   id: 9,
+  //   title: "Some title",
+  //   completed: false,
+  // },
 ];
 
 export const resolvers = {
@@ -72,16 +73,25 @@ export const resolvers = {
     todos: (_, { offset, limit }) => {
       return todos.slice(offset, limit);
     },
+    count: () => {
+      return todos.length;
+    },
   },
   Mutation: {
-    addTodo: (_, args) => {
+    addTodo: async (_, args) => {
       const todo = {
         id: todos.length + 1,
         title: args.title,
         completed: false,
       };
+
       todos.push(todo);
-      return todo;
+
+      return await new Promise((resolveInner) => {
+        setTimeout(() => {
+          resolveInner(todo);
+        }, 1000);
+      });
     },
 
     completeTodo: (_, args) => {
@@ -99,17 +109,11 @@ export const resolvers = {
   },
 };
 
-// The ApolloServer constructor requires two parameters: your schema
-// definition and your set of resolvers.
 const server = new ApolloServer({
   typeDefs,
   resolvers,
 });
 
-// Passing an ApolloServer instance to the `startStandaloneServer` function:
-//  1. creates an Express app
-//  2. installs your ApolloServer instance as middleware
-//  3. prepares your app to handle incoming requests
 const { url } = await startStandaloneServer(server, {
   listen: { port: 4000 },
 });

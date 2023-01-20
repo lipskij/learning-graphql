@@ -46,3 +46,9 @@ export const TOGGLE_TODO = gql`
     toggleTodo(id: $id) @client
   }
 `;
+
+export const GET_TODO_COUNT = gql`
+  query Count {
+    count
+  }
+`
